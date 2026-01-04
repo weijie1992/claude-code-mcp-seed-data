@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Nuxt 4 application (minimal starter setup) using Vue 3. The project uses TypeScript with Nuxt's auto-generated type configurations.
+This is a Nuxt 4 application using Vue 3, TypeScript, and Prisma ORM with PostgreSQL database. The project uses Nuxt's auto-generated type configurations and Prisma for type-safe database access.
 
 ## Common Commands
 
@@ -22,8 +22,16 @@ npm run generate     # Generate static site
 
 ### Setup
 ```bash
-npm install          # Install dependencies
-npm run postinstall  # Runs automatically after install - prepares Nuxt
+npm run setup        # Install dependencies AND run database migrations (recommended for first-time setup)
+npm install          # Install dependencies only
+```
+
+### Database
+```bash
+npm run db:migrate   # Run new migrations (creates migration if schema changed)
+npm run db:push      # Push schema changes without creating migration (dev only)
+npm run db:reset     # Reset database and re-run all migrations
+npm run db:studio    # Open Prisma Studio (database GUI)
 ```
 
 ## Project Structure
@@ -31,11 +39,17 @@ npm run postinstall  # Runs automatically after install - prepares Nuxt
 ```
 claude-code-mcp-seed-data/
 ├── app/
-│   └── app.vue           # Root Vue component
-├── public/               # Static assets
-├── nuxt.config.ts        # Nuxt configuration
-├── tsconfig.json         # TypeScript project references (actual config in .nuxt/)
-└── .nuxt/                # Auto-generated Nuxt files (gitignored)
+│   ├── app.vue                # Root Vue component
+│   └── generated/prisma/      # Generated Prisma Client (gitignored)
+├── prisma/
+│   ├── schema.prisma          # Database schema definition
+│   └── migrations/            # Database migration history
+├── public/                    # Static assets
+├── .env                       # Environment variables (gitignored)
+├── docker-compose.yml         # PostgreSQL database container
+├── nuxt.config.ts             # Nuxt configuration
+├── prisma.config.ts           # Prisma 7 configuration
+└── tsconfig.json              # TypeScript project references
 ```
 
 ## Architecture Notes
@@ -74,3 +88,44 @@ Create files in a `server/` directory (which will need to be created) following 
 
 ### Configuration
 All Nuxt configuration goes in `nuxt.config.ts`. Refer to https://nuxt.com/docs/api/configuration/nuxt-config for available options.
+
+## Database with Prisma
+
+### Database Setup
+The project uses PostgreSQL running in Docker (via docker-compose.yml):
+```bash
+docker compose up -d     # Start PostgreSQL database
+docker compose down      # Stop database
+```
+
+Connection: `postgresql://postgres:postgres@localhost:5432/postgres`
+
+### Prisma Schema
+Located at `prisma/schema.prisma`. The database currently has:
+- **User model** with unique email field for authentication
+- Auto-generated `id`, `createdAt`, and `updatedAt` fields
+
+### Working with Prisma
+
+**Prisma 7 Configuration**: Database URL is configured in `prisma.config.ts` (NOT in schema.prisma).
+
+**Define enums in schema.prisma**:
+```prisma
+enum UserRole {
+  USER
+  ADMIN
+}
+```
+Enums are auto-generated to TypeScript types - don't commit `app/generated/prisma/`, commit the schema instead.
+
+**Using Prisma Client**:
+```typescript
+import { PrismaClient } from '~/app/generated/prisma'
+
+const prisma = new PrismaClient()
+```
+
+**After schema changes**:
+1. Update `prisma/schema.prisma`
+2. Run `npm run db:migrate` to create and apply migration
+3. Prisma Client is automatically regenerated
