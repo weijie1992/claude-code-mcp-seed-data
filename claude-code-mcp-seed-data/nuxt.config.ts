@@ -2,29 +2,14 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-
   modules: ['@nuxtjs/tailwindcss', 'nuxt-auth-utils'],
-
-  alias: {
-    '~': '.',
-    '~~': '.',
-    '@': '.',
-    '@@': '.'
-  },
-
   tailwindcss: {
-    exposeConfig: false,
+    // exposeConfig: false,
     configPath: 'tailwind.config.ts',
-    cssPath: '~/assets/css/main.css',
-    viewer: false
+    cssPath: '~/assets/css/main.css'
+    // viewer: false
   },
-
-  experimental: {
-    payloadExtraction: false
-  },
-
   ssr: true,
-
   vite: {
     build: {
       sourcemap: false
