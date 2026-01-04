@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  #__nuxt {
+    min-height: 100vh;
+  }
+}
+
+/* Critical CSS to prevent layout shift during SSR */
+@layer components {
+  .auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(249 250 251);
+    padding: 3rem 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .auth-container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .auth-container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+}
