@@ -24,3 +24,7 @@ logs
 !.env.example
 
 /app/generated/prisma
+
+
+playwright-report/
+test-results/
