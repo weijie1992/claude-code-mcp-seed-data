@@ -10,6 +10,14 @@
         "ctx7sk-00477d78-77cd-49aa-bee2-aac877f93aac"
       ],
       "env": {}
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "env": {}
     }
   }
 }
